@@ -14,9 +14,13 @@
 package com.google.cloud.demo.model.sql;
 
 import com.google.appengine.api.blobstore.BlobKey;
+import com.google.appengine.api.datastore.FetchOptions;
+import com.google.appengine.api.datastore.Query;
+import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.cloud.demo.ConfigManager;
 import com.google.cloud.demo.model.Photo;
 import com.google.cloud.demo.model.PhotoManager;
+import com.google.cloud.demo.model.nosql.PhotoNoSql;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -92,6 +96,12 @@ public class PhotoManagerSql extends DemoEntityManagerSql<Photo> implements Phot
     //MM: TODO implement for real
   }
 
+  @Override
+  public Iterable<Photo> getSubsetOwnedAlbumPhotos(String userId, String albumId, int how_many,int offset) {
+	  return getEntitiesInTransaction(SQL_SELECT_ALL_ACTIVE_PHOTOS);    
+	    //MM: TODO implement for real
+  }
+  
   @Override
   public Photo deleteEntity(final Photo entity) {
     return runInTransaction(new TransactionalOperation<Photo>() {

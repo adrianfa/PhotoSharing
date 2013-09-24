@@ -242,7 +242,7 @@ function toggleCommentPost(id, expanded) {
 				 <tr>
 				 	<td><a href=<%= serviceManager.getRedirectUrl(null, currentUser.getUserId(), null, 
 				 			album.getId().toString(), 
-				 			 ServletUtils.REQUEST_PARAM_NAME_VIEW_STREAM) %>> <%= album.getTitle() %></a></td>
+				 			 ServletUtils.REQUEST_PARAM_NAME_VIEW_STREAM, null) %>> <%= album.getTitle() %></a></td>
 				 	<td><%= album.getSubscribers()%></td>
 				 	<td><%= album.getTags()%></td>
 					<td><input type="checkbox" name="delete-box" value=<%= album.getId().toString() %>></td>
@@ -296,7 +296,7 @@ function toggleCommentPost(id, expanded) {
                                  <tr>
                                         <td><a href=<%= serviceManager.getRedirectUrl(null, currentUser.getUserId(), null,
                                                         sub_album.getId().toString(),
-                                                         ServletUtils.REQUEST_PARAM_NAME_VIEW_STREAM) %>> <%= sub_album.getTitle() %></a></td>
+                                                         ServletUtils.REQUEST_PARAM_NAME_VIEW_STREAM, null) %>> <%= sub_album.getTitle() %></a></td>
                                         <td><%= sub_album.getSubscribers()%></td>
                                         <td><%= sub_album.getTags()%></td>
                                         <%-- MCM should replace the next line <td><%= Long.valueOf((Long)sub_album.getViews())%></td> --%>
@@ -350,6 +350,9 @@ function toggleCommentPost(id, expanded) {
     
 	<%
 	String streamId = request.getParameter(ServletUtils.REQUEST_PARAM_NAME_ALBUM_ID); 
+	String which_photos = request.getParameter(ServletUtils.REQUEST_PARAM_NAME_PHOTO_LOC);
+	int start_with_photo =1;
+	if (which_photos != null) start_with_photo = Integer.valueOf(which_photos); 
 	if(streamId != null && !streamId.isEmpty())
 	{
 		String streamUserId = request.getParameter(ServletUtils.REQUEST_PARAM_NAME_PHOTO_OWNER_ID);
@@ -405,11 +408,16 @@ function toggleCommentPost(id, expanded) {
     	<!-- KK -->
     	<%
       	//Iterable<Photo> photoIter = photoManager.getActivePhotos();
-      	Iterable<Photo> photoIter = photoManager.getOwnedAlbumPhotos(currentUser.getUserId(), streamId);
+      	Iterable<Photo> photoIter = photoManager.getSubsetOwnedAlbumPhotos(currentUser.getUserId(), streamId, 3, start_with_photo-1);
       	ArrayList<Photo> photos = new ArrayList<Photo>();
+      	int count=0;
       	try {
+      		
         	for (Photo photo : photoIter) {
-          		photos.add(photo);
+          		{ 
+          			photos.add(photo); 
+          			count++; 
+          			}
         	}
       	} catch (DatastoreNeedIndexException e) {
         	pageContext.forward(configManager.getErrorPageUrl(
@@ -417,7 +425,7 @@ function toggleCommentPost(id, expanded) {
       	}
 
       // goes over the pictures, one by one, to be shown to the public
-      	int count = 0;
+      	count = 0;
       	for (Photo photo : photos) {
         	String firstClass = "";
         	String lastClass = "";
@@ -462,6 +470,41 @@ function toggleCommentPost(id, expanded) {
    	<%
         	count++;
       	}
+    %>
+      	<%-- MM:the More pictures button after the 3 shown pictures --%>
+        <div class="next-3-pict">
+        	<form action="<%= serviceManager.getRedirectUrl(null, currentUser.getUserId(), null, 
+		 			                                       albm.getId().toString(), 
+		 			                                       ServletUtils.REQUEST_PARAM_NAME_VIEW_STREAM, String.valueOf(start_with_photo+3))
+		 			 %>"
+                 method="post">    
+                   <input id="btn-post" class="active btn" type="submit" value="More pictures">
+            </form>
+        </div>
+
+      <%-- MM: the box to ADD AN IMAGE --%> 
+        <div class="box">
+          <div class="image-wrap">
+          <form action="<%= configManager.getCreateAlbumUrl() %>"
+                 method="post">    
+               <input id="file_to_load" class="input text" name="stream" type="text" value="File name">
+               <input id="comments" class="input text" name="stream" type="text" value="Comments...">
+                   <input id="btn-post" class="active btn" type="submit" value="Upload file">
+                   <strong> "Add an Image" </strong>
+              </form>
+              </div>
+        </div>
+
+      <%-- MM: the subscribe button --%> 
+          <div class="create">
+          <form action="<%= configManager.getCreateAlbumUrl() %>"
+                 method="post">    
+                   <input id="btn-post" class="active btn" type="submit" value="Subscribe">
+              </form>
+
+        </div> 
+
+   <%
 	}
 	else {
     	albumIter = albumManager.getActiveAlbums();
@@ -484,7 +527,7 @@ function toggleCommentPost(id, expanded) {
 		        	<div class="image-wrap">
 		        		<a href="<%= serviceManager.getRedirectUrl(null, currentUser.getUserId(), null, 
 				 				album.getId().toString(), 
-				 			 	ServletUtils.REQUEST_PARAM_NAME_VIEW_STREAM) %>"> 
+				 			 	ServletUtils.REQUEST_PARAM_NAME_VIEW_STREAM, null) %>"> 
 		          		<img class="photo-image"
 		            		src="<%= ServletUtils.getUserIconImageUrl(album.getOwnerId())%>"
 			 			 	alt="Photo Image" /></a>
@@ -513,37 +556,7 @@ function toggleCommentPost(id, expanded) {
       	}
 	}
     %>
- <%-- MM:the More pictures button after the 3 shown pictures --%>
-    <div class="next-3-pict">
-    	<form action="<% /* it's supposed to show the next 3 */ %>"
-             method="post">    
-               <input id="btn-post" class="active btn" type="submit" value="More pictures">
-        </form>
-    </div>
-
-  <%-- MM: the box to ADD AN IMAGE --%> 
-    <div class="box">
-      <div class="image-wrap">
-      <form action="<%= configManager.getCreateAlbumUrl() %>"
-             method="post">    
-           <input id="file_to_load" class="input text" name="stream" type="text" value="File name">
-           <input id="comments" class="input text" name="stream" type="text" value="Comments...">
-               <input id="btn-post" class="active btn" type="submit" value="Upload file">
-               <strong> "Add an Image" </strong>
-          </form>
-          </div>
-    </div>
-
-  <%-- MM: the subscribe button --%> 
-      <div class="create">
-      <form action="<%= configManager.getCreateAlbumUrl() %>"
-             method="post">    
-               <input id="btn-post" class="active btn" type="submit" value="Subscribe">
-          </form>
-
-    </div> 
-
-	</div>
+ 	</div>
 	<!-- /.view -->  
 
 

@@ -129,10 +129,11 @@ public class PhotoServiceManager {
    * @param targetUrl target url. If null,
    * @param userId the photo owner id
    * @param id the photo id.
+   * @param next_three_photos starting with which three pictures to show now
    *
    * @return the url string to the main page.
    */
-  public String getRedirectUrl(String targetUrl, String userId, String id, String albumId, String tabId) {
+  public String getRedirectUrl(String targetUrl, String userId, String id, String albumId, String tabId, String which_photos) {
     if (targetUrl == null) {
       targetUrl = configManager.getMainPageUrl();
     }
@@ -160,6 +161,12 @@ public class PhotoServiceManager {
     	  .append(ServletUtils.REQUEST_PARAM_NAME_TAB_ID)
 	      .append("=")
 	      .append(tabId);
+    }
+    if (which_photos != null) {
+    	builder.append("&")
+    	  .append(ServletUtils.REQUEST_PARAM_NAME_PHOTO_LOC)
+	      .append("=")
+	      .append(which_photos);
     }
     return builder.toString();
   }

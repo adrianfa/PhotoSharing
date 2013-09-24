@@ -69,7 +69,7 @@ public class CommentPostServlet extends HttpServlet {
     }
     if (succeeded) {
       res.sendRedirect(appContext.getPhotoServiceManager().getRedirectUrl(
-          req.getParameter(ServletUtils.REQUEST_PARAM_NAME_TARGET_URL), user, id, null, "viewstream"));
+          req.getParameter(ServletUtils.REQUEST_PARAM_NAME_TARGET_URL), user, id, null, "viewstream", null));
     } else {
       res.sendError(400, builder.toString());
     }

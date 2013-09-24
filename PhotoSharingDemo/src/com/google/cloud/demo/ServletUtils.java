@@ -37,6 +37,7 @@ public final class ServletUtils extends HttpServlet {
   public static final String REQUEST_PARAM_NAME_VIEW_STREAM = "viewstream";
   public static final String REQUEST_PARAM_NAME_CHECKBOX_GROUP = "delete-box";
   public static final String REQUEST_PARAM_NAME_ALBUM_ID = "stream-id";
+  public static final String REQUEST_PARAM_NAME_PHOTO_LOC = "which_photos";
   // The error code.
   public static final String REQUEST_PARAM_NAME_CODE = "code";
   public static final String[] USER_ICONS = new String[] {

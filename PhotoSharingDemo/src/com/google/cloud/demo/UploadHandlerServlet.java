@@ -89,7 +89,7 @@ public class UploadHandlerServlet extends HttpServlet {
     }
     if (succeeded) {
       res.sendRedirect(appContext.getPhotoServiceManager().getRedirectUrl(
-          req.getParameter(ServletUtils.REQUEST_PARAM_NAME_TARGET_URL), user.getUserId(), id, albumId, "viewstream"));
+          req.getParameter(ServletUtils.REQUEST_PARAM_NAME_TARGET_URL), user.getUserId(), id, albumId, "viewstream",null));
     } else {
       res.sendError(400, "Request cannot be handled.");
     }

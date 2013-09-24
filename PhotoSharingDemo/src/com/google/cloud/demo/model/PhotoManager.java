@@ -53,6 +53,20 @@ public interface PhotoManager extends DemoEntityManager<Photo> {
    *
    * @return an {@code Iterable} collection of photos shared to the user.
    */
+  Iterable<Photo> getSubsetOwnedAlbumPhotos(String userId, String albumId, int how_many,int offset);
+  /**
+   * Queries all photos shared to a user with specific user id. The result set
+   * does not include photos owned by the user.
+   *
+   * @param userId the user id.
+   *
+   * @oaram how_many is the number of photos to be returned
+   * 
+   * @param offset starting with which position in the list to allow next chunk of photos
+   * 
+   * @return an {@code Iterable} collection of photos shared to the user.
+   */
+	  
   Iterable<Photo> getSharedPhotos(String userId);
 
   /**
