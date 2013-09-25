@@ -285,5 +285,22 @@ public class PhotoManagerSql extends DemoEntityManagerSql<Photo> implements Phot
 	        }
 	      });
   }
+  
+  @Override
+	public String getAlbumSize(String userId, String albumId) {
+	  Iterable<Photo> photoIter = getOwnedAlbumPhotos(userId, albumId);
+	  int count=0; for (Photo photo : photoIter) {	count++; }
+	  return String.valueOf(count);
+	}
+  
+  @Override
+ 	public long getNewestPhotoTimestamp(String userId, String albumId) {
+ 	  Iterable<Photo> photoIter = getSubsetOwnedAlbumPhotos(userId, albumId, 1, 0);
+ 	  Photo first_one = null;
+ 	  for (Photo photo : photoIter) {  first_one = photo; break;}
+       if (first_one != null) return first_one.getUploadTime();
+       return 0; 
+     
+     }
 
 }

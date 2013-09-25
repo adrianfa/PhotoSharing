@@ -113,4 +113,24 @@ public interface PhotoManager extends DemoEntityManager<Photo> {
  * @return the deactived photo object; null if operation failed.
  */
 void deactivateAlbumPhotos(String userId, long id);
+
+/**
+ * provides the number of photos in an album
+ * 
+ * @param userId
+ * @param albumId
+ * @return String containing the number of photos in the album
+ */
+
+String getAlbumSize(String userId, String albumId);
+
+/** provides the timestamp of the photo added last
+ * 
+ * @param serId
+ * @param albumId
+ * @return the string with when was the last photo added
+ */
+ 
+long getNewestPhotoTimestamp(String userId, String albumId);
+
 }

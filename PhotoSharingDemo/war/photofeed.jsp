@@ -290,8 +290,8 @@ function toggleCommentPost(id, expanded) {
 				 	<td><a href=<%= serviceManager.getRedirectUrl(null, currentUser.getUserId(), null, 
 				 			album.getId().toString(), 
 				 			 ServletUtils.REQUEST_PARAM_NAME_VIEW_STREAM, null) %>> <%= album.getTitle() %></a></td>
-				 	<td><%= album.getSubscribers()%></td>
-				 	<td><%= album.getTags()%></td>
+				 	<td><%= ServletUtils.formatTimestamp(photoManager.getNewestPhotoTimestamp(currentUser.getUserId(),album.getId().toString()))%></td>
+				 	<td><%= photoManager.getAlbumSize(currentUser.getUserId(),album.getId().toString())%></td>
 					<td><input type="checkbox" name="delete-box" value=<%= album.getId().toString() %>></td>
 				 </tr>
 			 <%	} %>
@@ -344,10 +344,10 @@ function toggleCommentPost(id, expanded) {
                                         <td><a href=<%= serviceManager.getRedirectUrl(null, currentUser.getUserId(), null,
                                                         sub_album.getId().toString(),
                                                          ServletUtils.REQUEST_PARAM_NAME_VIEW_STREAM, null) %>> <%= sub_album.getTitle() %></a></td>
-                                        <td><%= sub_album.getSubscribers()%></td>
-                                        <td><%= sub_album.getTags()%></td>
+                                        <td><%= ServletUtils.formatTimestamp(photoManager.getNewestPhotoTimestamp(currentUser.getUserId(), sub_album.getId().toString()))%></td>
+                                        <td><%= photoManager.getAlbumSize(currentUser.getUserId(),sub_album.getId().toString())%></td>
                                         <%-- MCM should replace the next line <td><%= Long.valueOf((Long)sub_album.getViews())%></td> --%>
-                                        <td><%= sub_album.getTags()%></td>
+                                        <td><%= sub_album.getViews()%></td>
                                         <td><input type="checkbox" name="unsubscribe-box" value=<%= sub_album.getId().toString() %>></td>
                                  </tr>
                          <%     } %>
