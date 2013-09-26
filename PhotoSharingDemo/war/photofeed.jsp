@@ -590,11 +590,73 @@ function toggleCommentPost(id, expanded) {
     <%--MM: should ask for what to search and allow the push of the "Search" button --%>
       <div class="create">
         <p>SEARCH STREAMS</p>
-          <form action="<%= configManager.getCreateAlbumUrl() %>"
+      
+          <div>
+            <form action="<%= configManager.getSearchAlbumUrl()%>"
              method="post">
-               <input id="search-name" class="input text" name="stream" type="text" value="search name here...">
+               <input id="search_txt" class="input text" name="stream" type="text" value="search name here...">
                <input id="btn-post" class="active btn" type="submit" value="Search">
           </form>
+          </div>
+          <% 
+          String search_text = request.getParameter(ServletUtils.REQUEST_PARAM_NAME_SEARCH_TXT);
+          if (search_text != null) {
+    		  
+    albumIter = albumManager.getActiveAlbums();
+  	albums = new ArrayList<Album>();
+  	try {
+    	for (Album album : albumIter) {
+        	if ((album.getTitle()).indexOf(search_text) != -1) albums.add(album);
+        }
+  	} catch (DatastoreNeedIndexException e) {
+        pageContext.forward(configManager.getErrorPageUrl(
+          ConfigManager.ERROR_CODE_DATASTORE_INDEX_NOT_READY));
+  	} 
+  	
+  	}   int count = 0;
+      	for (Album album : albums) {
+      		Photo coverPhoto = null;
+      		String coverPhotoUrl = null;
+          	Iterable<Photo> photoIter = photoManager.getOwnedAlbumPhotos(album.getOwnerId().toString(), album.getId().toString());
+          	try {
+            	for (Photo photo : photoIter) {
+	          		if(photo.isAlbumCover())
+	          			coverPhoto = photo;
+            	}
+          	} catch (DatastoreNeedIndexException e) {
+            	pageContext.forward(configManager.getErrorPageUrl(
+              		ConfigManager.ERROR_CODE_DATASTORE_INDEX_NOT_READY));
+          	}
+			if(coverPhoto == null)
+				coverPhotoUrl = ServletUtils.getUserIconImageUrl(currentUser.getUserId());
+			else
+				coverPhotoUrl = serviceManager.getImageDownloadUrl(coverPhoto);	    	  
+	%>
+      		<div class="feed">
+	      		<div class="post group">
+		        	<div class="image-wrap">
+		        		<a href="<%= serviceManager.getRedirectUrl(null, currentUser.getUserId(), null, 
+				 				album.getId().toString(), 
+				 			 	ServletUtils.REQUEST_PARAM_NAME_SEARCH_STREAM, null) %>"> 
+		          		<img class="photo-image"
+		            		src="<%= coverPhotoUrl%>"
+			 			 	alt="Photo Image" /></a>
+	        		</div>
+		        	<div class="owner group">
+		          		<div class="desc">
+		            		<h3><%= ServletUtils.getProtectedUserNickname(album.getOwnerNickname()) %></h3>	            
+		            		<p class="timestamp"><%= ServletUtils.formatTimestamp(album.getUploadTime()) %></p>
+		            		<p>
+		            		<p><c:out value="<%= album.getTitle() %>" escapeXml="true"/>
+		          		</div>
+        			</div>
+	      		</div>
+   			</div>
+	<%	
+	count++;
+	if (count ==2) break;
+      	}
+    %>
      </div>
     <%-- MM: should appear as a result of the above search up to 5 streams --%>
     <div>
@@ -623,7 +685,7 @@ function toggleCommentPost(id, expanded) {
 	          ConfigManager.ERROR_CODE_DATASTORE_INDEX_NOT_READY));
       	}
 
-      	int count = 0;
+      	count = 0;
       	for (Album album : albums) {
       		Photo coverPhoto = null;
       		String coverPhotoUrl = null;

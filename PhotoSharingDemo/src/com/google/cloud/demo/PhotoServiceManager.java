@@ -184,6 +184,49 @@ public class PhotoServiceManager {
     }
     return builder.toString();
   }
+  public String getRedirectUrl1(String targetUrl, String userId, String id, String albumId, String tabId, String which_photos, String search_text) {
+	    if (targetUrl == null) {
+	      targetUrl = configManager.getMainPageUrl();
+	    }
+	    StringBuilder builder = new StringBuilder(targetUrl);
+	    if (userId != null) {
+	      builder.append("?")
+	          .append(ServletUtils.REQUEST_PARAM_NAME_PHOTO_OWNER_ID)
+	          .append("=")
+	          .append(userId);
+	    }
+	    if(id != null) {
+	    	builder.append("&")  	 
+	    	  .append(ServletUtils.REQUEST_PARAM_NAME_PHOTO_ID)
+	          .append("=")
+	          .append(id);	
+	    }
+	    if(albumId != null) {
+	    	builder.append("&")  	 
+	    	  .append(ServletUtils.REQUEST_PARAM_NAME_ALBUM_ID)
+	          .append("=")
+	          .append(albumId);	
+	    }
+	    if (tabId != null) {
+	    	builder.append("&")
+	    	  .append(ServletUtils.REQUEST_PARAM_NAME_TAB_ID)
+		      .append("=")
+		      .append(tabId);
+	    }
+	    if (which_photos != null) {
+	    	builder.append("&")
+	    	  .append(ServletUtils.REQUEST_PARAM_NAME_PHOTO_LOC)
+		      .append("=")
+		      .append(which_photos);
+	    }
+	    if ( search_text != null) {
+	    	builder.append("&")
+	    	  .append(ServletUtils.REQUEST_PARAM_NAME_SEARCH_TXT)
+		      .append("=")
+		      .append(search_text);
+	    }
+	    return builder.toString();
+	  }
 
   public void cleanDeatctivedPhotos() {
     Iterable<Photo> photos = photoManager.getDeactivedPhotos();

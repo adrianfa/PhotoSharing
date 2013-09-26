@@ -75,6 +75,13 @@ public class ConfigManager {
   }
 
   /**
+   * The search servlet URL.
+   */
+  public String getSearchAlbumUrl() {
+    return "/search";
+  }
+
+  /**
    * The album cover picture servlet URL.
    */
   public String getAlbumCoverUrl() {
