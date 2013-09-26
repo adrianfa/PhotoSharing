@@ -235,8 +235,11 @@ function toggleCommentPost(id, expanded) {
 
     <div class="header group">
       <h1>
-        <img src="img/photofeed.png" alt="Photofeed" />
-      </h1>
+        <img src="img/photofeed.png" alt="Photofeed" /></h1>
+    </div>
+    <div class="logoutgroup">
+         <p>Hello <%= ServletUtils.getProtectedUserNickname(currentUser.getNickname()) %> , <%= currentUser.getEmail() %> , <a href=<%= userService.createLogoutURL(configManager.getMainPageUrl())%>>Sign out</a></p>
+      
     </div>
       
 	<ul class="header group" id="tabs">
@@ -265,12 +268,6 @@ function toggleCommentPost(id, expanded) {
 			 	<th>Last New Picture</th>
 			 	<th>Number of Pictures</th>
 			 	<th>Delete</th>
-			 </tr>
-			 <tr>
-			 	<td>Adnan's World</td>
-			 	<td>8/19/2013</td>
-			 	<td>314</td>
-				<td><input type="checkbox" name="delete-box" value="Erase"></td>
 			 </tr>
 		    <%
 		      Iterable<Album> albumIter = albumManager.getOwnedAlbums(currentUser.getUserId());
@@ -311,20 +308,6 @@ function toggleCommentPost(id, expanded) {
                                 <th>Views</th>
                                 <th>Unsubscribe</th>
                          </tr>
-                         <tr>
-                                <td>The grateful dead Berkely 1969</td>
-                                <td>8/20/2013</td>
-                                <td>314</td>
-                                <td>10M</td>
-                                <td><input type="checkbox" name="unsubscribe-box" value="Unsubscribe"></td>
-                         </tr>
-                         <tr>
-                                <td>Van Hallen</td>
-                                <td>7/4/2013</td>
-                                <td>56</td>
-                                <td>3141</td>
-                                <td><input type="checkbox" name="unsubscribe-box" value="Unsubscribe"></td>
-                         </tr>
 
                     <%
                       Iterable<Album> sub_albumsIter = albumManager.getOwnedAlbums(currentUser.getUserId());
@@ -344,9 +327,8 @@ function toggleCommentPost(id, expanded) {
                                         <td><a href=<%= serviceManager.getRedirectUrl(null, currentUser.getUserId(), null,
                                                         sub_album.getId().toString(),
                                                          ServletUtils.REQUEST_PARAM_NAME_VIEW_STREAM, null) %>> <%= sub_album.getTitle() %></a></td>
-                                        <td><%= ServletUtils.formatTimestamp(photoManager.getNewestPhotoTimestamp(currentUser.getUserId(), sub_album.getId().toString()))%></td>
+                                        <td><%= ServletUtils.formatTimestamp(photoManager.getNewestPhotoTimestamp(currentUser.getUserId(), sub_album.getId().toString())) %></td>
                                         <td><%= photoManager.getAlbumSize(currentUser.getUserId(),sub_album.getId().toString())%></td>
-                                        <%-- MCM should replace the next line <td><%= Long.valueOf((Long)sub_album.getViews())%></td> --%>
                                         <td><%= sub_album.getViews()%></td>
                                         <td><input type="checkbox" name="unsubscribe-box" value=<%= sub_album.getId().toString() %>></td>
                                  </tr>
@@ -405,6 +387,7 @@ function toggleCommentPost(id, expanded) {
 		String streamUserId = request.getParameter(ServletUtils.REQUEST_PARAM_NAME_PHOTO_OWNER_ID);
 	%>
 		<div class="page-title">
+
 		<%
 		Album albm = albumManager.getAlbum(streamUserId, Long.parseLong(streamId));
 		if (albm != null) {	
@@ -414,35 +397,27 @@ function toggleCommentPost(id, expanded) {
 		<%
 		}
 		%>
+					<%-- MM: Subscribe  --%>
+        <div class="subscribe">
+        	<form action="<%= configManager.getManageAlbumsUrl() %>"
+                 method="post">    
+                   <input id="btn-post" class="active btn" type="submit" value="Subscribe">
+            </form>
+        </div>
+		
 		</div>
 		<%-- MM: we enable the user to pick up a picture to add to the stream --%>
 		
     	<div id="upload-wrap">
       		<div id="upload">
-        		<div class="account group">
-          			<div id="account-thumb">
-            			<img
-              				src="<%= ServletUtils.getUserIconImageUrl(currentUser.getUserId()) %>"
-              				alt="Unknown User Icon" />
-       				</div>
-          			<!-- /#account-thumb -->
-          			<div id="account-name">
-            			<h2><%= ServletUtils.getProtectedUserNickname(currentUser.getNickname()) %></h2>
-            			<p><%= currentUser.getEmail() %>
-             | 				<a href=<%= userService.createLogoutURL(configManager.getMainPageUrl())%>>Sign out</a>
-            			</p>
-          			</div>
-          		<!-- /#account-name -->
-        		</div>
-        		<!-- /.account -->
-        		<a id="btn-choose-image" class="active btn" onclick="togglePhotoPost(true)">Choose an image</a>
+        		<a id="btn-choose-image" class="active btn" onclick="togglePhotoPost(true)">Add an image</a>
         		<div id="upload-form" style="display:none">
           			<form action="<%= serviceManager.getUploadUrl() + "?stream-id=" + streamId %>" method="post" 
             			enctype="multipart/form-data">
             			<input id="input-file" class="inactive file btn" type="file" name="photo"
               				onchange="onFileSelected()">
             			<textarea name="title" placeholder="Write a description"></textarea>
-            			<input id="btn-post" class="active btn" type="submit" value="Post">
+            			<input id="btn-post" class="active btn" type="submit" value="Upload file">
             			<a class="cancel" onclick="togglePhotoPost(false)">Cancel</a>
           			</form>
         		</div>
@@ -534,27 +509,7 @@ function toggleCommentPost(id, expanded) {
             </form>
         </div>
 
-      <%-- MM: the box to ADD AN IMAGE --%> 
-        <div class="box">
-          <div class="image-wrap">
-          <form action="<%= configManager.getCreateAlbumUrl() %>"
-                 method="post">    
-               <input id="file_to_load" class="input text" name="stream" type="text" value="File name">
-               <input id="comments" class="input text" name="stream" type="text" value="Comments...">
-                   <input id="btn-post" class="active btn" type="submit" value="Upload file">
-                   <strong> "Add an Image" </strong>
-              </form>
-              </div>
-        </div>
-
-      <%-- MM: the subscribe button --%> 
-          <div class="create">
-          <form action="<%= configManager.getCreateAlbumUrl() %>"
-                 method="post">    
-                   <input id="btn-post" class="active btn" type="submit" value="Subscribe">
-              </form>
-
-        </div> 
+   
 
    <%
 	}
@@ -631,7 +586,7 @@ function toggleCommentPost(id, expanded) {
      <%-- MCM here starts the div shown if the client chooses the SEARCH view --%>
      <%-- ******************************************************************* --%>
 
-    <div class="tabContent" id="searchstream">
+    <div class="tabContent" id="searchstream">    		
     <%--MM: should ask for what to search and allow the push of the "Search" button --%>
       <div class="create">
         <p>SEARCH STREAMS</p>
@@ -656,6 +611,93 @@ function toggleCommentPost(id, expanded) {
       <div class="create">
         <p>TOP 3 TRENDING STREAMS</p>
       </div>
+      <%
+        albumIter = albumManager.getActiveAlbums();
+      	albums = new ArrayList<Album>();
+      	try {
+        	for (Album album : albumIter) {
+	        	albums.add(album);
+	        }
+      	} catch (DatastoreNeedIndexException e) {
+	        pageContext.forward(configManager.getErrorPageUrl(
+	          ConfigManager.ERROR_CODE_DATASTORE_INDEX_NOT_READY));
+      	}
+
+      	int count = 0;
+      	for (Album album : albums) {
+      		Photo coverPhoto = null;
+      		String coverPhotoUrl = null;
+          	Iterable<Photo> photoIter = photoManager.getOwnedAlbumPhotos(album.getOwnerId().toString(), album.getId().toString());
+          	try {
+            	for (Photo photo : photoIter) {
+	          		if(photo.isAlbumCover())
+	          			coverPhoto = photo;
+            	}
+          	} catch (DatastoreNeedIndexException e) {
+            	pageContext.forward(configManager.getErrorPageUrl(
+              		ConfigManager.ERROR_CODE_DATASTORE_INDEX_NOT_READY));
+          	}
+			if(coverPhoto == null)
+				coverPhotoUrl = ServletUtils.getUserIconImageUrl(currentUser.getUserId());
+			else
+				coverPhotoUrl = serviceManager.getImageDownloadUrl(coverPhoto);	    	  
+	%>
+      		<div class="feed">
+	      		<div class="post group">
+		        	<div class="image-wrap">
+		        		<a href="<%= serviceManager.getRedirectUrl(null, currentUser.getUserId(), null, 
+				 				album.getId().toString(), 
+				 			 	ServletUtils.REQUEST_PARAM_NAME_VIEW_STREAM, null) %>"> 
+		          		<img class="photo-image"
+		            		src="<%= coverPhotoUrl%>"
+			 			 	alt="Photo Image" /></a>
+	        		</div>
+		        	<div class="owner group">
+		          		<div class="desc">
+		            		<h3><%= ServletUtils.getProtectedUserNickname(album.getOwnerNickname()) %></h3>	            
+		            		<p class="timestamp"><%= ServletUtils.formatTimestamp(album.getUploadTime()) %></p>
+		            		<p>
+		            		<p><c:out value="<%= album.getTitle() %>" escapeXml="true"/>
+		          		</div>
+		          		<!-- /.desc -->
+        			</div>
+		        	<!-- /.usr -->
+	      		</div>
+	      		<!-- /.post -->
+		      
+     <%
+	        	//Iterable<Comment> comments = commentManager.getComments(photo);
+	        	//for (Comment comment : comments) {}
+     %>      
+
+     
+   			</div>
+    		<!-- /.feed -->
+	<%	
+			count++;
+	if (count ==3) break;
+      	}
+    %>
+       	<div class = box >	
+      		<tr>
+      		    
+                    <td><input type="radio" name="course" value="no_reports">No reports</td><p></p>
+                    <td><input type="radio" name="course" value="five_min">Every 5 minutes</td><p></p>
+                    <td><input type="radio" name="course" value="one_hour">Every 1 hour </td><p></p>
+                    <td><input type="radio" name="course" value="every_day">Every day </td><p></p>
+      		</tr>
+  		</div>
+        <div class="next-3-pict">
+                 <%-- MCM: replace action form with update rate --%>
+                 <tr> Email trending report </tr>
+        	     <form action="<%= configManager.getCreateAlbumUrl() %>"
+                   method="post">    
+                   <input id="btn-post" class="active btn" type="submit" value="Update Rate">
+                 </form>
+        </div>
+     
+    		<!-- /.feed -->
+ 
     </div>
 
      <%-- ******************************************************************* --%>
