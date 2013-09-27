@@ -395,7 +395,7 @@ function toggleCommentPost(id, expanded) {
 		if (albm != null) {	
 		%>
 			<p>Stream Name: "<%= albm.getTitle()%>"
-	  		for user: "<%= albm.getOwnerNickname() %>" </p>
+	  		for user: "<%= albm.getOwnerNickname() %>"  -  Please click on image to select stream cover.</p>
 		<%
 		}
 		%>
@@ -517,6 +517,11 @@ function toggleCommentPost(id, expanded) {
    <%
 	}
 	else {
+		%>      
+		<div class="create">
+        <p>VIEW ALL STREAMS</p>
+      </div>
+		 <%
     	albumIter = albumManager.getActiveAlbums();
       	albums = new ArrayList<Album>();
       	try {
@@ -616,7 +621,7 @@ function toggleCommentPost(id, expanded) {
           ConfigManager.ERROR_CODE_DATASTORE_INDEX_NOT_READY));
   	} 
   	
-  	}   int count = 0;
+    int count = 0;
       	for (Album album : albums) {
       		Photo coverPhoto = null;
       		String coverPhotoUrl = null;
@@ -640,7 +645,7 @@ function toggleCommentPost(id, expanded) {
 		        	<div class="image-wrap">
 		        		<a href="<%= serviceManager.getRedirectUrl(null, album.getOwnerId(), null, 
 				 				album.getId().toString(), 
-				 			 	ServletUtils.REQUEST_PARAM_NAME_SEARCH_STREAM, null) %>"> 
+				 			 	ServletUtils.REQUEST_PARAM_NAME_VIEW_STREAM, null) %>"> 
 		          		<img class="photo-image"
 		            		src="<%= coverPhotoUrl%>"
 			 			 	alt="Photo Image" /></a>
@@ -658,6 +663,7 @@ function toggleCommentPost(id, expanded) {
 	<%	
 	count++;
 	if (count ==2) break;
+      	}
       	}
     %>
      </div>
@@ -704,7 +710,7 @@ function toggleCommentPost(id, expanded) {
         		albums.add(albm);
         }
 	
-	  count = 0;
+	  int count = 0;
    	  for (Album album : albums) {
 		Photo coverPhoto = null;
 	   	String coverPhotoUrl = null;

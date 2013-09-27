@@ -78,6 +78,7 @@ div.tabContent#searchstream .logoutmsg {
 }
 
 div.tabContent#viewstream .create {
+	position: fixed;
 	width:970px;
 	margin: 80px 0 0 0;
 }
@@ -282,7 +283,7 @@ textarea {
   border-radius: 3px;
   box-shadow: 0 0 2px #d8d8d8;
   margin: 10px 0 10px 0;
-  margin-top: 17px;
+  margin-top: 45px;
   float: left;
   width: 330px;
 }
