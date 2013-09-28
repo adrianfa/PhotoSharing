@@ -1,6 +1,15 @@
 package com.google.cloud.demo;
 
 import java.io.IOException;
+import java.util.Properties;
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.Session;
+import javax.mail.Transport;
+import javax.mail.internet.AddressException;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
+
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -9,6 +18,8 @@ import javax.servlet.http.HttpServletResponse;
 import com.google.cloud.demo.model.Album;
 import com.google.cloud.demo.model.AlbumManager;
 import com.google.cloud.demo.model.DemoUser;
+
+
 
 public class CreateAlbumServlet extends HttpServlet {
 	
@@ -33,8 +44,7 @@ public class CreateAlbumServlet extends HttpServlet {
           AlbumManager albumManager = appContext.getAlbumManager();
           Album album = albumManager.newAlbum(currentUser.getUserId());
           album.setTitle(content);
-          album.setOwnerNickname(ServletUtils.getProtectedUserNickname(currentUser.getNickname()));
-          album.setSubscribers(subscribers);
+          album.setOwnerNickname(ServletUtils.getProtectedUserNickname(currentUser.getNickname()));         
           album.setTags(tags);
           long views = 1;
           album.setViews(views);          
@@ -42,6 +52,31 @@ public class CreateAlbumServlet extends HttpServlet {
         
           albumManager.upsertEntity(album);
           succeeded = true;
+          
+          // MM : Sends email to subscribers to invite them
+          album.setSubscribers(subscribers);
+  		
+          Properties props = new Properties();
+          Session session = Session.getDefaultInstance(props, null);
+
+          String msgBody = (album.getOwnerNickname()).concat(" invites you to see a new stream in connexus: ").concat(album.getTitle());
+
+          try {
+              Message msg = new MimeMessage(session);
+              msg.setFrom(new InternetAddress(album.getOwnerNickname(),"Connexus"));
+              msg.addRecipient(Message.RecipientType.TO,
+                               new InternetAddress(album.getSubscribers(),"Mr. User"));
+              msg.setSubject("Connexus invitation");
+              msg.setText(msgBody);
+              Transport.send(msg);
+              
+          } catch (AddressException e) {
+              // ...
+          } catch (MessagingException e) {
+              // ...
+          }
+           // MM: finished sending email
+
       } else {
         builder.append("Comment could not be empty");
       }
