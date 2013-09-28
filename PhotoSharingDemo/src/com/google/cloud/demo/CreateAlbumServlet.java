@@ -2,6 +2,8 @@ package com.google.cloud.demo;
 
 import java.io.IOException;
 import java.util.Properties;
+import java.util.logging.Logger;
+
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Session;
@@ -26,6 +28,9 @@ public class CreateAlbumServlet extends HttpServlet {
  /**
 	 * 
 	 */
+	private static final Logger logger =
+		      Logger.getLogger(PhotoServiceManager.class.getCanonicalName());
+	
 	private static final long serialVersionUID = 518284167764359702L;
 
 @Override
@@ -63,13 +68,13 @@ public class CreateAlbumServlet extends HttpServlet {
 
           try {
               Message msg = new MimeMessage(session);
-              msg.setFrom(new InternetAddress(album.getOwnerNickname(),"Connexus"));
+              msg.setFrom(new InternetAddress(currentUser.getEmail(),"Connexus"));
               msg.addRecipient(Message.RecipientType.TO,
                                new InternetAddress(album.getSubscribers(),"Mr. User"));
               msg.setSubject("Connexus invitation");
               msg.setText(msgBody);
               Transport.send(msg);
-              
+              logger.info(currentUser.getEmail() + " MCM sent email to " + album.getSubscribers());
           } catch (AddressException e) {
               // ...
           } catch (MessagingException e) {

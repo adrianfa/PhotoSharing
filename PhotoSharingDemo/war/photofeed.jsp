@@ -623,7 +623,9 @@ function toggleCommentPost(id, expanded) {
   	albums = new ArrayList<Album>();
   	try {
     	for (Album album : albumIter) {
-        	if ((album.getTitle()).indexOf(search_text) != -1) albums.add(album);
+        	if ((album.getTitle()).indexOf(search_text) != -1) {albums.add(album); }
+        	else 
+        		if ((album.getTags()!=null)&& (album.getTags()).indexOf(search_text) != -1) {albums.add(album);}
         }
   	} catch (DatastoreNeedIndexException e) {
         pageContext.forward(configManager.getErrorPageUrl(

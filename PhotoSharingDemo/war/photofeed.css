@@ -17,10 +17,12 @@ body {
   width: 100%;
 }
 
-.wrap .logoutgroup {
+.logoutgroup {
+	margin: -18px 0 0 -1px;
+    padding: 0 0 16px 0;
     position: fixed;   
 	top:15px;
-	left:270px;	
+	left:325px;	
 }
 
 .glow {
@@ -246,6 +248,9 @@ textarea {
   width: 330px;
 }
 
+.feed :hover{
+	background: #F8F8F8;
+}
 .feed.first {
   /*margin-top: 47px;*/
 }
@@ -258,6 +263,10 @@ textarea {
   list-style-type: none;
   margin-top: 27px;
   padding: 15px 15px 12px 15px;
+}
+
+.feed .post :hover {
+	background-color: #FFF;
 }
 
 .feed .post .owner {
@@ -349,6 +358,12 @@ textarea {
   overflow: hidden;
   width: 300px;
 }
+
+.image-wrap :hover {
+	box-shadow: inset 0 0 10px 0 #fff;
+
+	}
+
 .photo-image {
   vertical-align: middle;
   width: 100%;
