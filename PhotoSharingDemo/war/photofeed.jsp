@@ -267,7 +267,11 @@ function toggleCommentPost(id, expanded) {
         <img src="img/photofeed.png" alt="Photofeed" /></h1>
     </div>
     <div class="logoutgroup">
-         <p>Hello <%= ServletUtils.getProtectedUserNickname(currentUser.getNickname()) %> , <%= currentUser.getEmail() %> , <a href=<%= userService.createLogoutURL(configManager.getMainPageUrl())%>>Sign out</a></p>
+         <p>Hello <%= ServletUtils.getProtectedUserNickname(currentUser.getNickname()) %> , 
+                  <%= currentUser.getEmail() %> , 
+                  <a href=<%= userService.createLogoutURL(configManager.getMainPageUrl())%>>Sign out
+                  </a>
+         </p>
       
     </div>
       
@@ -387,6 +391,11 @@ function toggleCommentPost(id, expanded) {
 
 
 	<div class="tabContent" id="createstream">
+	<% int error_in_page=0;
+	String same_name = request.getParameter(ServletUtils.REQUEST_PARAM_NAME_PHOTO_LOC);
+	if (same_name != null) error_in_page = Integer.valueOf(same_name);
+	
+	if (error_in_page==0) { %>
       <div class="view-title">
         <p>CREATE STREAMS</p>
         <form action="<%= configManager.getCreateAlbumUrl() %>"
@@ -400,12 +409,21 @@ function toggleCommentPost(id, expanded) {
 		     <div class="tags">
 		     	<textarea name="tags" placeholder="Add tags using comma as a separator..."></textarea>
 		     	<p>Tag your stream</p>
-		     	<input id="cover-url" class="input text" name="streamCoverUrl" type="text" value="URL here...">
+		     	<input id="cover-url" class="input text" name="coverImageUrl" type="text" value="URL here...">
 		     	<p>URL to cover image</p>
 		     	<p>(Can be empty)</p>        
 		     </div>
 	    </form>
      </div>
+     <% } else { %>
+     <div class="view-title">
+      
+     <img class="errormsg" 
+          src="img/CreateError.png"
+          alt="Error Image" />
+     
+     </div>
+     <%} %>
      </div>
 
      <%-- ******************************************************************* --%>
@@ -496,10 +514,17 @@ function toggleCommentPost(id, expanded) {
           		ConfigManager.ERROR_CODE_DATASTORE_INDEX_NOT_READY));
       	}
 
-      // goes over the pictures, one by one, to be shown to the public
-      	count = 0;
-      	String reloadUrl;
-      	for (Photo photo : photos) {
+      
+      	%>
+      	<div class="bubble">
+      	 <img onmouseover="this.src='img/choose.png'" onmouseout="this.src=''" src="img/choose.png"/>
+      	 </div>
+      	<%
+      	
+        /* goes over the pictures, one by one, to be shown to the public */
+      	  count = 0;
+      	  String reloadUrl;
+      	  for (Photo photo : photos) {
       		reloadUrl = serviceManager.getAlbumCoverImageUrl(photo);      		
         	String firstClass = "";
         	String lastClass = "";
@@ -512,18 +537,21 @@ function toggleCommentPost(id, expanded) {
         	if (photos.size()!=0)
         	{; // show a picture only if there is at least one in the list
     	%>
+    	
     		<div class="feed <%= firstClass %> <%= lastClass %>"  
     			onclick="selectCover( <%= Integer.toString(count + 1) %>, '<%= reloadUrl%>')">
       			<div class="post group">
         			<div class="image-wrap">
-          				<img class="photo-image"
+          				<img class="photo-image" 
             				src="<%= serviceManager.getImageDownloadUrl(photo)%>"
             				alt="Photo Image" />
-        			</div>
-        			<div class="owner group">
+            			</div>	
+            		   
+        			
+        			<div class="owner group" >
           			<!-- MM: took out here code for cats images -->
           				<div class="desc">
-           				<h3>
+           				<h3> 
             					<%= ServletUtils.getProtectedUserNickname(photo.getOwnerNickname()) %></h3>          
             				<p class="timestamp"><%= ServletUtils.formatTimestamp(photo.getUploadTime()) %></p>
             				<p>
@@ -587,7 +615,7 @@ function toggleCommentPost(id, expanded) {
 		
    %>		
 	     <div class="view-title">
-          <p>VIEW ALBUMS</p>
+          <p>VIEW ALBUMS  </p>
         </div>
    <% 
 		
@@ -764,6 +792,7 @@ function toggleCommentPost(id, expanded) {
       Album albm = null;
       Long albId = leaderboardManager.getLeaderboardEntry("EntryA").getAlbumId();
       String usrId = leaderboardManager.getLeaderboardEntry("EntryA").getUserId();
+      long a = leaderboardManager.getLeaderboardEntry("EntryA").getViewsNumber();
       if(albId != 0 && usrId != null) {
       	albm = albumManager.getAlbum(usrId, albId.longValue());
       	if(albm != null)
@@ -771,6 +800,7 @@ function toggleCommentPost(id, expanded) {
       }
       albId = leaderboardManager.getLeaderboardEntry("EntryB").getAlbumId();
       usrId = leaderboardManager.getLeaderboardEntry("EntryB").getUserId();
+      long b= leaderboardManager.getLeaderboardEntry("EntryB").getViewsNumber();
       if(albId != 0 && usrId != null) {
         	albm = albumManager.getAlbum(usrId, albId.longValue());
         	if(albm != null)
@@ -778,12 +808,13 @@ function toggleCommentPost(id, expanded) {
         }
       albId = leaderboardManager.getLeaderboardEntry("EntryC").getAlbumId();
       usrId = leaderboardManager.getLeaderboardEntry("EntryC").getUserId();
+      long c= leaderboardManager.getLeaderboardEntry("EntryC").getViewsNumber();
       if(albId != 0 && usrId != null) {
         	albm = albumManager.getAlbum(usrId, albId.longValue());
         	if(albm != null)
         		albums.add(albm);
         }
-	
+	  long nv;
 	  int count = 0;
    	  for (Album album : albums) {
 		Photo coverPhoto = null;
@@ -801,7 +832,8 @@ function toggleCommentPost(id, expanded) {
 		if(coverPhoto == null)
 			coverPhotoUrl = ServletUtils.getUserIconImageUrl(album.getOwnerId());
 		else
-			coverPhotoUrl = serviceManager.getImageDownloadUrl(coverPhoto);	    	  
+			coverPhotoUrl = serviceManager.getImageDownloadUrl(coverPhoto);
+		if (count ==0) nv=a; else if (count ==1) nv=b; else nv=c;
 		%>
      		<div class="feed">
 	      		<div class="post group">
@@ -816,7 +848,7 @@ function toggleCommentPost(id, expanded) {
 		        	<div class="owner group">
 		          		<div class="desc">
 		            		<h3><%= ServletUtils.getProtectedUserNickname(album.getOwnerNickname()) %></h3>	            
-		            		<p class="timestamp"><%= ServletUtils.formatTimestamp(album.getUploadTime()) %></p>
+		            		<p><%= String.valueOf(nv)%> views past hour.</p>
 		            		<p>
 		            		<p><c:out value="<%= album.getTitle() %>" escapeXml="true"/>
 		          		</div>
