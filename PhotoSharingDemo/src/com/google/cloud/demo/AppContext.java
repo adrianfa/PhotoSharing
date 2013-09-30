@@ -136,6 +136,7 @@ public class AppContext {
 	  DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 	  Entity interval = new Entity("ReportInterval", "IntervalKey");
 	  interval.setProperty("IntervalOption", "no_reports");
+	  interval.setProperty("PreviousReportTime", 1);
 	  datastore.put(interval);
 	  return interval.getKey();
   }
