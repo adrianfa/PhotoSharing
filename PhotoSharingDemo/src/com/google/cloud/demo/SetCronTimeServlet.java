@@ -32,7 +32,7 @@ public class SetCronTimeServlet extends HttpServlet {
 		e1.printStackTrace();
 	}
     res.sendRedirect(appContext.getPhotoServiceManager().getSearchUrl(
-              req.getParameter(ServletUtils.REQUEST_PARAM_NAME_TARGET_URL), appContext.getCurrentUser().getUserId(), null, null, "trendingstream", null, search_txt));
+              req.getParameter(ServletUtils.REQUEST_PARAM_NAME_TARGET_URL),null, null, null, "trendingstream", null, search_txt));
   }
 
 }

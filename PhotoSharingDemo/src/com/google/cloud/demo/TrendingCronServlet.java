@@ -45,9 +45,9 @@ public class TrendingCronServlet extends HttpServlet {
     LeaderboardEntry entryA = leaderboardManager.getLeaderboardEntry("EntryA");
     LeaderboardEntry entryB = leaderboardManager.getLeaderboardEntry("EntryB");
     LeaderboardEntry entryC = leaderboardManager.getLeaderboardEntry("EntryC");
-    long entryA_albumId = entryA.getAlbumId();
-    long entryB_albumId = entryB.getAlbumId();
-    long entryC_albumId = entryC.getAlbumId();
+    Long entryA_albumId = entryA.getAlbumId();
+    Long entryB_albumId = entryB.getAlbumId();
+    Long entryC_albumId = entryC.getAlbumId();
     long entryA_views = entryA.getViewsNumber();
     long entryB_views = entryB.getViewsNumber();
     long entryC_views = entryC.getViewsNumber();
@@ -63,11 +63,11 @@ public class TrendingCronServlet extends HttpServlet {
     Iterable<Album> albumIter = albumManager.getActiveAlbums();
   	try {
     	for (Album album : albumIter) {
-    		if(album.getId().toString().compareTo(String.valueOf(entryA_albumId)) == 0 ) 
+    		if(album.getId().toString().compareTo(entryA_albumId.toString()) == 0 ) 
     			Atitle=album.getTitle();
-    		if(album.getId().toString().compareTo(String.valueOf(entryB_albumId)) == 0 ) 
+    		if(album.getId().toString().compareTo(entryB_albumId.toString()) == 0 ) 
     			Btitle=album.getTitle();
-    		if(album.getId().toString().compareTo(String.valueOf(entryC_albumId)) == 0 ) 
+    		if(album.getId().toString().compareTo(entryC_albumId.toString()) == 0 ) 
     			Ctitle=album.getTitle();
     		
      		Iterable<View> albumViews = viewManager.getAlbumViews(album.getId().toString());
@@ -194,7 +194,7 @@ public class TrendingCronServlet extends HttpServlet {
 			}
             try {
 				msg.addRecipient(Message.RecipientType.TO,
-				                 new InternetAddress("adrian.farkash@gmail.com","TA"));
+				                 new InternetAddress("kamran.ks+aptmini@gmail.com","TA"));
 			} catch (UnsupportedEncodingException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
