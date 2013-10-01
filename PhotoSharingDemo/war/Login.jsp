@@ -23,7 +23,7 @@
 	<font size="2"> <strong> Login with Gmail user ID and password: </strong></font>
 	<BR>
 	<font size="2">  <strong> By clicking the link below: </strong></font>
-    <a href=<%= UserServiceFactory.getUserService().createLogoutURL("/photofeed.jsp")%>>Sign out</a>
+    <a href=<%= UserServiceFactory.getUserService().createLogoutURL("/photofeed.jsp")%>>Sign in</a>
 	</p>
 	
   </body>
